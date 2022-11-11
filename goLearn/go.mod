@@ -3,7 +3,14 @@ module goLearn
 go 1.18
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0 // indirect
+	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/golang/gddo v0.0.0-20210115222349-20d68f94ee1f // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
+	github.com/oklog/ulid v1.3.1 // indirect
+	github.com/rs/xid v1.4.0 // indirect
+	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/yuin/goldmark v1.4.13 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect

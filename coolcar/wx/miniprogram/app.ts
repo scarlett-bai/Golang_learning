@@ -1,7 +1,16 @@
+import { getSetting, getUserInfo } from "./utils/util"
+
+let resolveUserInfo: (value: WechatMiniprogram.UserInfo | PromiseLike<WechatMiniprogram.UserInfo>) => void;
+let rejectUserInfo: (reason?: any) => void
 // app.ts
 App<IAppOption>({
-  globalData: {},
-  onLaunch() {
+  globalData: {
+    userInfo: new Promise((resolve, reject) => {
+      resolveUserInfo = resolve
+      rejectUserInfo = reject
+    })
+  },
+  async onLaunch() {
     // 展示本地存储能力
     const logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
@@ -14,5 +23,19 @@ App<IAppOption>({
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
       },
     })
-  },
+    try  {
+        const setting = await getSetting()
+        if (setting.authSetting['scope.userInfo']){
+          const userInfoRes = await getUserInfo()
+          resolveUserInfo(userInfoRes.userInfo)
+        } 
+      } catch (err){
+      rejectUserInfo(err)
+    }
+  
+
+},
+  resolveUserInfo(userInfo: WechatMiniprogram.UserInfo){
+    resolveUserInfo(userInfo)
+  }
 })
