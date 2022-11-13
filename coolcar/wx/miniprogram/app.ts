@@ -1,4 +1,4 @@
-import { getSetting, getUserInfo } from "./utils/util"
+import { getSetting, getUserInfo } from "./utils/wxapi"
 
 let resolveUserInfo: (value: WechatMiniprogram.UserInfo | PromiseLike<WechatMiniprogram.UserInfo>) => void;
 let rejectUserInfo: (reason?: any) => void
@@ -11,10 +11,6 @@ App<IAppOption>({
     })
   },
   async onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
 
     // 登录
     wx.login({

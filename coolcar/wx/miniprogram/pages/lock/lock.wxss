@@ -1,0 +1,39 @@
+/* pages/lock/lock.wxss */
+page {
+    height: 100%;
+}
+
+.container{
+    height: 100%;
+    padding-top: 100rpx;
+    padding-bottom: 100rpx;
+}
+
+.static {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sedan {
+    opacity: .8;
+    width: 600rp;
+    height: 360rpx;
+}
+.unlock {
+    width: 600rpx;
+}
+
+.avatar-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.switch-container{
+    display: flex;
+    align-items: center;
+    width: 8em;
+    justify-content: space-between;
+}

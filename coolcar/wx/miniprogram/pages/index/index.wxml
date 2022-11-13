@@ -1,1 +1,13 @@
-<map id="map" latitude="{{location.latitude}}" longitude="{{location.longitude}}" scale="{{scale}}" setting="{{setting}}" enable-overlooking="{{isOverLooking}}" enable-3D="{{is3D}}" markers="{{markers}}"></map>
+<map id="map" latitude="{{location.latitude}}" longitude="{{location.longitude}}" scale="{{scale}}" setting="{{setting}}" enable-overlooking="{{isOverLooking}}" enable-3D="{{is3D}}" markers="{{markers}}">
+    <view class="icon-container">
+        <!-- <view class="round" bindtap="onMyTripsTag">
+            <open-data type="userAvatarUrl" />
+        </view> -->
+        <image class="round" src="{{avatarURL?avatarURL:'/resources/account.png'}}" bindtap="onMyTripsTap"></image>
+        <image src="/resources/my_location.png" bindtap="onMyLocationTap"></image>
+    </view>
+    <cover-view class="btn-container bg-grey round" bindtap="onScanTap">
+        <cover-view>扫码租车</cover-view>
+    </cover-view>
+</map>
+<model id="licModel" title="身份认证" contents="需要身份认证才能租车"></model>

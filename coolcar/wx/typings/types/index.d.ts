@@ -3,5 +3,6 @@
 interface IAppOption {
     globalData: {
         userInfo: Promise<WechatMiniprogram.UserInfo>,
+        
     }
 }
