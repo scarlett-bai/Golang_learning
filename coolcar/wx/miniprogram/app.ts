@@ -14,10 +14,15 @@ App<IAppOption>({
 
     // 登录
     wx.login({
-      success: res => {
-        console.log(res.code)
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      },
+      success(res) {
+        wx.request({
+          url: 'https://example.com/onLogin',
+          data: {
+            code: res.code
+          }
+        })
+      console.log(res)
+      }
     })
     try  {
         const setting = await getSetting()

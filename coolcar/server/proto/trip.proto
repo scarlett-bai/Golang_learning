@@ -1,0 +1,41 @@
+syntax = "proto3";
+package coolcar;
+option go_package="coolcar/proto/gen/go;trippb"; 
+
+message Location {
+    double latitude = 1;
+    double longitude = 2;
+}
+// 枚举类型
+enum TripStatus {
+    TS_NOT_SPECIFIED = 0;
+    NOT_STARTED = 1;
+    IN_PROGRESS = 2;
+    FINISHED = 3;
+    PAID = 4;
+}
+
+message Trip {
+    string start = 1;  // 第一个字段是 start  因为是二进制流 所以需要告诉
+    string end = 2;   // 第二个字段是 end
+    int64 duration_sec = 3;  // 命名养成好的习惯，把单位放进去
+    int64 fee_cent = 4; 
+
+    Location start_pos = 5;
+    Location end_pos = 6;
+    repeated Location path_locations = 7;  // repeated 字段一般命名使用复数形式
+    TripStatus status = 8;
+}
+
+message GetTripRequest {
+    string  id = 1;
+}
+
+message GetTripResponse {
+    string id = 1;
+    Trip trip = 2;
+}
+
+service TripService {
+    rpc GetTrip (GetTripRequest) returns (GetTripResponse);
+}

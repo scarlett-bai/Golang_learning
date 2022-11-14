@@ -1,4 +1,4 @@
-
+const defaultAvatarUrl = '/resources/account.png'
 Page({
   data: {
     showPath: true,
@@ -15,7 +15,14 @@ Page({
         name: 'tom',
         id: 3,
       }
-    ]
+    ],
+    avatarUrl: defaultAvatarUrl,
+    onChooseAvatar(e: any){
+      const {avatarUrl} = e.detail
+      this.setData({
+        avatarUrl,
+      })
+    }
   },
 })
  

@@ -4,6 +4,12 @@
     <block wx:else>
         <text>learn css</text>
     </block>
+    <view class="margin-top">
+        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+            <image class="avatar" src="{{avatarUrl}}" />
+        </button>
+        <input type="nickname" class="weui-input" placeholder="请输入昵称"></input>
+    </view>
     <view class="list">
         <view class="item cu-avatar xl radius {{val.id%2?'blue':'red'}}" wx:for="{{values}}" wx:for-item="val" wx:key="id">
             employee is {{val.name}}

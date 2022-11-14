@@ -4,17 +4,6 @@ const shareLocationKey = "share_location"
 // pages/lock/lock.ts
 Page({
 
-  getUserProfile(e: any){
-    wx.getUserProfile({
-      desc:'获取',
-      success: res => {
-        this.setData({
-          userInfo: res.userInfo,
-          avatarURL: res.userInfo.avatarUrl,
-        })
-      }
-    })
-  },
   onShareLocation(e: any){
     const shareLocation:boolean = e.detail.value
     wx.setStorageSync(shareLocationKey, shareLocation)
@@ -66,6 +55,8 @@ Page({
     shareLocation: false,
     avatarURL: '',
     userinfo: {},
+    hasUserInfo: false,
+    CanIUseGetUserProfile: false,
   },
 
   /**
@@ -80,7 +71,17 @@ Page({
       shareLocation: wx.getStorageSync(shareLocationKey) || false,
     })
   },
-
+  getUserProfile(e: any){
+    wx.getUserProfile({
+      desc: '用于展示头像',
+      success:res => {
+        this.setData({
+          userinfo: res.userInfo,
+          hasUserInfo: true,
+        })
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
