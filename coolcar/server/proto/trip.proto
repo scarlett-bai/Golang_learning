@@ -18,8 +18,8 @@ enum TripStatus {
 message Trip {
     string start = 1;  // 第一个字段是 start  因为是二进制流 所以需要告诉
     string end = 2;   // 第二个字段是 end
-    int64 duration_sec = 3;  // 命名养成好的习惯，把单位放进去
-    int64 fee_cent = 4; 
+    int32 duration_sec = 3;  // 命名养成好的习惯，把单位放进去
+    int32 fee_cent = 4; 
 
     Location start_pos = 5;
     Location end_pos = 6;

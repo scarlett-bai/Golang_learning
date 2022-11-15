@@ -1,3 +1,4 @@
+import { IAppOption } from "./appoption";
 import { getSetting, getUserInfo } from "./utils/wxapi"
 
 let resolveUserInfo: (value: WechatMiniprogram.UserInfo | PromiseLike<WechatMiniprogram.UserInfo>) => void;
@@ -11,7 +12,12 @@ App<IAppOption>({
     })
   },
   async onLaunch() {
-
+    wx.request({
+      url: 'http://localhost:8080/trip/trip123',
+      method:'GET',
+      success: console.log,
+      fail: console.error,
+    })
     // 登录
     wx.login({
       success(res) {
