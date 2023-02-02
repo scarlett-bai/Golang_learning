@@ -3,7 +3,7 @@ export namespace routing {
         trip_id: string
     }
     export function driving(o: DrivingOpts) {
-        return `/pages/driving/driving?trip_id=${o.trip_id}`
+        return `/pages/driving/driving?trip_id=${o.trip_id}`  // /- 指的就是miniprogram目录
     }
 
     export interface LockOpts {

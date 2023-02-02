@@ -3,5 +3,5 @@ config_version: 3
 
 http:
   rules:
-  - selector: coolcar.TripService.GetTrip
-    get: /trip/{id}
+    - selector: coolcar.TripService.GetTrip
+      get: /trip/{id}

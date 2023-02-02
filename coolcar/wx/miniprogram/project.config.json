@@ -5,25 +5,87 @@
     "include": []
   },
   "compileType": "miniprogram",
+  "libVersion": "2.8.2",
   "projectname": "coolcar",
+  "scripts": {
+    "beforeCompile": "npm run tsc",
+    "beforePreview": "npm run tsc",
+    "beforeUpload": "npm run tsc"
+  },
   "setting": {
-    "useCompilerPlugins": [
-      "typescript"
-    ],
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": false,
+    "coverView": true,
+    "nodeModules": true,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": false,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "lazyloadPlaceholderEnable": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
-    "es6": true,
-    "enhance": true
+    "enableEngineNative": false,
+    "useIsolateContext": false,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "showES6CompileOption": false
   },
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
-  "condition": {},
-  "srcMiniprogramRoot": "miniprogram/",
   "appid": "wx7eef9c73c4911bbf",
-  "libVersion": "2.26.2",
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/learncss/learncss",
+          "pathName": "pages/learncss/learncss",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/register/register",
+          "pathName": "pages/register/register",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/lock/lock",
+          "pathName": "pages/lock/lock",
+          "query": "car_id=demo_car",
+          "scene": null
+        },
+        {
+          "name": "pages/driving/driving",
+          "pathName": "pages/driving/driving",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/mytrips/mytrips",
+          "pathName": "pages/mytrips/mytrips",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  },
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2

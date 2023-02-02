@@ -1,4 +1,5 @@
 import { IAppOption } from "./appoption";
+// import { coolcar } from "./service/proto_gen/trip_pb";
 import { getSetting, getUserInfo } from "./utils/wxapi"
 
 let resolveUserInfo: (value: WechatMiniprogram.UserInfo | PromiseLike<WechatMiniprogram.UserInfo>) => void;
@@ -19,17 +20,20 @@ App<IAppOption>({
       fail: console.error,
     })
     // 登录
-    wx.login({
-      success(res) {
-        wx.request({
-          url: 'https://example.com/onLogin',
-          data: {
-            code: res.code
-          }
-        })
-      console.log(res)
-      }
-    })
+    // wx.login({
+    //   success:res => {
+    //     console.log(res.code)  // 发送res.code 到后台换取openId  sessionKey  unionId
+    //     wx.request({
+    //       url: 'http://localhost:8080/v1/auth/login',
+    //       method: 'POST',
+    //       data: {
+    //         code: res.code,
+    //       } as auth.v1.ILoginRequest,
+    //       success: console.log,
+    //       fail: console.error,
+    //     })
+    //   },
+    // })
     try  {
         const setting = await getSetting()
         if (setting.authSetting['scope.userInfo']){

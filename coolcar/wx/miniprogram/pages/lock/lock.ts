@@ -1,3 +1,4 @@
+import { IAppOption } from "../../appoption"
 import { routing } from "../../utils/routing"
 
 const shareLocationKey = "share_location"
@@ -71,9 +72,9 @@ Page({
       shareLocation: wx.getStorageSync(shareLocationKey) || false,
     })
   },
-  getUserProfile(e: any){
-    wx.getUserProfile({
-      desc: '用于展示头像',
+  getUserProfile(){
+    wx.getUserInfo({
+      // desc: '用于展示头像',
       success:res => {
         this.setData({
           userinfo: res.userInfo,
