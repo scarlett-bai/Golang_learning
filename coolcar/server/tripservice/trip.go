@@ -19,6 +19,7 @@ func (*Service) GetTrip(c context.Context, req *trippb.GetTripRequest) (*trippb.
 				Latitude:  30,
 				Longitude: 120,
 			},
+			Status: trippb.TripStatus_FINISHED,
 		},
 	}, nil
 }

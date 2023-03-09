@@ -63,7 +63,7 @@ export namespace coolcar {
     enum TripStatus {
         TS_NOT_SPECIFIED = 0,
         NOT_STARTED = 1,
-        IN_PROGRESS = 2,
+        IN_PROCESS = 2,
         FINISHED = 3,
         PAID = 4
     }
@@ -78,10 +78,10 @@ export namespace coolcar {
         end?: (string|null);
 
         /** Trip durationSec */
-        durationSec?: (number|null);
+        durationSec?: (number|Long|null);
 
         /** Trip feeCent */
-        feeCent?: (number|null);
+        feeCent?: (number|Long|null);
 
         /** Trip startPos */
         startPos?: (coolcar.ILocation|null);
@@ -112,10 +112,10 @@ export namespace coolcar {
         public end: string;
 
         /** Trip durationSec. */
-        public durationSec: number;
+        public durationSec: (number|Long);
 
         /** Trip feeCent. */
-        public feeCent: number;
+        public feeCent: (number|Long);
 
         /** Trip startPos. */
         public startPos?: (coolcar.ILocation|null);

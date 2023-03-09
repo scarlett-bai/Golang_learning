@@ -1,4 +1,7 @@
+import camelcaseKeys = require("camelcase-keys");
 import { IAppOption } from "./appoption";
+import { auth } from "./service/proto_gen/auth/auth_pb";
+import { coolcar } from "./service/proto_gen/trip_pb";
 // import { coolcar } from "./service/proto_gen/trip_pb";
 import { getSetting, getUserInfo } from "./utils/wxapi"
 
@@ -13,27 +16,38 @@ App<IAppOption>({
     })
   },
   async onLaunch() {
-    wx.request({
-      url: 'http://localhost:8080/trip/trip123',
-      method:'GET',
-      success: console.log,
-      fail: console.error,
-    })
-    // 登录
-    // wx.login({
-    //   success:res => {
-    //     console.log(res.code)  // 发送res.code 到后台换取openId  sessionKey  unionId
-    //     wx.request({
-    //       url: 'http://localhost:8080/v1/auth/login',
-    //       method: 'POST',
-    //       data: {
-    //         code: res.code,
-    //       } as auth.v1.ILoginRequest,
-    //       success: console.log,
-    //       fail: console.error,
-    //     })
+    // wx.request({
+    //   url: 'http://localhost:8080/trip/trip123',
+    //   method:'GET',
+    //   success: res => {
+    //     const GetTripRes = coolcar.GetTripResponse.fromObject(camelcaseKeys(res.data as object, {
+    //       deep: true,
+    //     }))
+    //     console.log("getTripRes:", GetTripRes)
+    //     console.log('status is', coolcar.TripStatus[GetTripRes.trip?.status!])
     //   },
+    //   fail: console.error,
     // })
+    // 登录
+    wx.login({
+      success:res => {
+        console.log(res.code)  // 发送res.code 到后台换取openId  sessionKey  unionId
+        wx.request({
+          url: 'http://localhost:8080/v1/auth/login',
+          method: 'POST',
+          data: {
+            code: res.code,
+          } as auth.v1.ILoginRequest,
+          success: res => {
+            const loginResp: auth.v1.ILoginResponse = auth.v1.LoginResponse.fromObject(
+              camelcaseKeys(res.data as object),
+            )
+            console.log(loginResp)
+          },
+          fail: console.error,
+        })
+      },
+    })
     try  {
         const setting = await getSetting()
         if (setting.authSetting['scope.userInfo']){
