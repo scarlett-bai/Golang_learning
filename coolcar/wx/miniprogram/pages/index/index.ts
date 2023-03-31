@@ -1,14 +1,13 @@
 // index.ts
 
-import { IAppOption } from "../../appoption"
 import { routing } from "../../utils/routing"
 
 // 获取应用实例
-
+const defaultAvatarUrl = "/resources/account.png"
 Page({
   isPageShowing: false,
   data: {
-    avatarURL: '',
+    avatarUrl: defaultAvatarUrl,
     setting: {
     skew: 0,
     rotate:0,
@@ -49,6 +48,19 @@ Page({
     }
   ],
 },
+onChooseAvatar(e:any) {
+  console.log("avatarUrl",e.detail.avatarUrl)
+  // const { avatarUrl } = e.detail.avatarUrl
+  // wx.uploadFile({
+  //   url: 
+  // })
+  this.setData({
+    avatarUrl: e.detail.avatarUrl,
+  })
+
+  
+
+},
 onMyTripsTap(){
   wx.navigateTo({
     url: routing.mytrips(),
@@ -74,12 +86,14 @@ onMyLocationTap(){
   })
 },
 
-async onLoad(){
-  const userInfo = await getApp<IAppOption>().globalData.userInfo
-  this.setData({
-    avatarURL: userInfo.avatarUrl,
-  })
-},
+
+
+// async onLoad(){
+//   const userInfo = await getApp<IAppOption>().globalData.userInfo
+//   this.setData({
+//     avatarURL: userInfo.avatarUrl,
+//   })
+// },
   onScanTap(){
     wx.scanCode({
       success: async () => {

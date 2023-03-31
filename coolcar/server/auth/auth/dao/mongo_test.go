@@ -5,13 +5,12 @@ import (
 	"os"
 	"testing"
 
-	mgo "coolcar/shared/mongo"
+	"coolcar/shared/id"
+	mgutil "coolcar/shared/mongo"
+	"coolcar/shared/mongo/objid"
 	mongotesting "coolcar/shared/mongo/testing"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var mongoURI string
@@ -19,27 +18,29 @@ var mongoURI string
 func TestResolveAccountID(t *testing.T) {
 	// start container
 	c := context.Background()
-	mc, err := mongo.Connect(c, options.Client().ApplyURI(mongoURI))
+	mc, err := mongotesting.NewClient(c)
 	if err != nil {
 		t.Fatalf("cannot connect mongodb: %v", err)
 	}
 	m := NewMongo(mc.Database("coolcar"))
 	_, err = m.col.InsertMany(c, []interface{}{
 		bson.M{
-			mgo.IDField: mustObjID("63e49d966d5cbaf02d5c0d10"),
-			openIDField: "openid_1",
+			mgutil.IDFieldName: objid.MustFromID(id.AccountID("63e49d966d5cbaf02d5c0d10")),
+			openIDField:        "openid_1",
 		},
 		bson.M{
-			mgo.IDField: mustObjID("63e49d966d5cbaf02d5c0d22"),
-			openIDField: "openid_2",
+			mgutil.IDFieldName: objid.MustFromID(id.AccountID("63e49d966d5cbaf02d5c0d22")),
+			openIDField:        "openid_2",
 		},
 	})
 	if err != nil {
 		t.Fatalf("cannot insert initial values: %v", err)
 	}
-	m.NewObjID = func() primitive.ObjectID {
-		return mustObjID("63e49d966d5cbaf02d5c0d21")
-	}
+	// mgutil.NewObjID = func() primitive.ObjectID {
+	// 	return objid.MustFromID(id.AccountID("63e49d966d5cbaf02d5c0d21"))
+	// }
+
+	mgutil.NewObjectIDWithValue(id.AccountID("63e49d966d5cbaf02d5c0d21"))
 	cases := []struct {
 		name   string
 		openID string
@@ -68,7 +69,7 @@ func TestResolveAccountID(t *testing.T) {
 			if err != nil {
 				t.Errorf("cannot resolve account id for %q: %v", cc.openID, err)
 			}
-			if id != cc.want {
+			if id.String() != cc.want {
 				t.Errorf("resolve account id: wamt:%q; got %q", cc.want, id)
 			}
 
@@ -87,14 +88,10 @@ func TestResolveAccountID(t *testing.T) {
 	// }
 }
 
-func mustObjID(hex string) primitive.ObjectID {
-	objID, err := primitive.ObjectIDFromHex(hex)
-	if err != nil {
-		panic(err)
-	}
-	return objID
+func MustFromID(s string) {
+	panic("unimplemented")
 }
 
 func TestMain(m *testing.M) {
-	os.Exit(mongotesting.RunWithMongoInDocker(m, &mongoURI))
+	os.Exit(mongotesting.RunWithMongoInDocker(m))
 }

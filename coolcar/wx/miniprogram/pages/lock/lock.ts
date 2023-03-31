@@ -1,29 +1,73 @@
 import { IAppOption } from "../../appoption"
+import { TripService } from "../../service/trip"
 import { routing } from "../../utils/routing"
 
 const shareLocationKey = "share_location"
 // pages/lock/lock.ts
 Page({
 
+  carID: '',
+  data: {
+    shareLocation: false,
+    avatarURL: '',
+    userinfo: {},
+    hasUserInfo: false,
+    CanIUseGetUserProfile: false,
+  },
+
+  async onLoad(opt: Record<'car_id', string>) {
+    const o: routing.LockOpts = opt
+    this.carID = o.car_id
+    // console.log('unlocking car', o.car_id)
+    const userInfo = await getApp<IAppOption>().globalData.userInfo
+    this.setData({
+      avatarURL: userInfo.avatarUrl,
+      shareLocation: wx.getStorageSync(shareLocationKey) || false,
+    })
+  },
+
   onShareLocation(e: any){
     const shareLocation:boolean = e.detail.value
     wx.setStorageSync(shareLocationKey, shareLocation)
   },
+  onGetUserInfo(e: any) {
+    const userInfo: WechatMiniprogram.UserInfo = e.detail.userInfo
+    if (userInfo) {
+      getApp<IAppOption>().resolveUserInfo(userInfo)
+      this.setData({
+        shareLocation: true,
+      })
+      wx.setStorageSync(shareLocationKey, true)
+    }
+  },
+
   onUnlockTap(){
     wx.getLocation({
       type: 'gcj02',
-      success: loc => {
+      success: async loc => {
         console.log('starting a trip', {
           location: {
             latitude: loc.latitude,
             longitude: loc.longitude,
           },
-          // TODO:需要双向绑定
           avatarURL: this.data.shareLocation 
           ? this.data.avatarURL : '',
         })
+        if (!this.carID) {
+          console.error('no carID specified')
+          return
+        }
+        const trip = await TripService.CreateTrip({
+          start: loc,
+          carId: this.carID,
+        })
 
-        const tripID = 'trip456'
+        if (!trip.id) {
+          console.error('no tripID in response', trip)
+          return
+        }
+        // return
+        // const tripID = 'trip456'
          wx.showLoading({
             title: '开锁中',
             mask: true,
@@ -32,7 +76,7 @@ Page({
             wx.redirectTo({
               // url: `/pages/driving/driving?trip_id=${{tripID}}`,
               url: routing.driving({
-                trip_id: tripID,
+                trip_id: trip.id!,
               }),
               complete: () => {
                 wx.hideLoading
@@ -52,37 +96,23 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {
-    shareLocation: false,
-    avatarURL: '',
-    userinfo: {},
-    hasUserInfo: false,
-    CanIUseGetUserProfile: false,
-  },
+  
 
   /**
    * 生命周期函数--监听页面加载
    */
-  async onLoad(opt: Record<'car_id', string>) {
-    const o: routing.LockOpts = opt
-    console.log('unlocking car', o.car_id)
-    const userInfo = await getApp<IAppOption>().globalData.userInfo
-    this.setData({
-      avatarURL: userInfo.avatarUrl,
-      shareLocation: wx.getStorageSync(shareLocationKey) || false,
-    })
-  },
-  getUserProfile(){
-    wx.getUserInfo({
-      // desc: '用于展示头像',
-      success:res => {
-        this.setData({
-          userinfo: res.userInfo,
-          hasUserInfo: true,
-        })
-      }
-    })
-  },
+  
+  // getUserProfile(){
+  //   wx.getUserInfo({
+  //     // desc: '用于展示头像',
+  //     success:res => {
+  //       this.setData({
+  //         userinfo: res.userInfo,
+  //         hasUserInfo: true,
+  //       })
+  //     }
+  //   })
+  // },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
