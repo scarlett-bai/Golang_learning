@@ -7,8 +7,9 @@ import (
 	"coolcar/blob/cos"
 	"coolcar/blob/dao"
 	"coolcar/shared/server"
-	"flag"
 	"log"
+
+	"github.com/namsral/flag"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,9 +17,14 @@ import (
 	"google.golang.org/grpc"
 )
 
+var addr = flag.String("addr", ":8083", "address to listen")
 var mongoURI = flag.String("mongo_uri", "mongodb://localhost:27017", "mongo uri")
+var cosAddr = flag.String("cos_addr", "<URL>", "cos address")
+var cosSecID = flag.String("cos_sec_id", "<SEC_ID>", "cos secret id")
+var cosSecKey = flag.String("cos_sec_key", "<SEC_KEY>", "cos secret key")
 
 func main() {
+	flag.Parse()
 	logger, err := server.NewZapLogger()
 	if err != nil {
 		log.Fatalf("cannot create logger: %v", err)
@@ -32,16 +38,17 @@ func main() {
 	db := mongoClient.Database("coolcar")
 
 	st, err := cos.NewService(
-		"https://coolcar-1317748279.cos.ap-shanghai.myqcloud.com",
-		"AKIDW9anlTqypPkqhJirlQpa6NRSGqCH6h28",
-		"C8qJWTAdtuiJn39FNJ0WuMhtvzua1GH5")
+		// "https://coolcar-1317748279.cos.ap-shanghai.myqcloud.com",
+		*cosAddr, *cosSecID, *cosSecKey)
+	// "AKIDW9anlTqypPkqhJirlQpa6NRSGqCH6h28",
+	// "C8qJWTAdtuiJn39FNJ0WuMhtvzua1GH5")
 	if err != nil {
 		logger.Fatal("cannot create cos service", zap.Error(err))
 	}
 
 	logger.Sugar().Fatal(server.RunGRPCServer(&server.GRPCConfig{
 		Name:   "blob",
-		Addr:   ":8083",
+		Addr:   *addr,
 		Logger: logger,
 		RegisterFunc: func(s *grpc.Server) {
 			blobpb.RegisterBlobServiceServer(s, &blob.Service{

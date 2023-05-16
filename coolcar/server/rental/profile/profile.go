@@ -15,10 +15,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type IdentityReslover interface {
+	Resolve(c context.Context, photo []byte) (*rentalpb.Identity, error)
+}
+
 type Service struct {
 	BlobClient        blobpb.BlobServiceClient
 	PhotoGetExpire    time.Duration
 	PhotoUploadExpire time.Duration
+	IdentityReslover  IdentityReslover
 	Mongo             *dao.Mongo
 	Logger            *zap.Logger
 }

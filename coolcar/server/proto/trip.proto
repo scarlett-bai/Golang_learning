@@ -38,5 +38,7 @@ message GetTripResponse {
 
 service TripService {
     rpc GetTrip(GetTripRequest) returns (GetTripResponse);
+
+
 }
 

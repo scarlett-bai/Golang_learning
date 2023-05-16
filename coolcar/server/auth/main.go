@@ -13,6 +13,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/namsral/flag"
+
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,19 +22,26 @@ import (
 	"google.golang.org/grpc"
 )
 
+var addr = flag.String("addr", ":8081", "address to listen")
+var mongoURI = flag.String("mongo_uri", "mongodb://localhost:27017", "mongo")
+var privateKeyFile = flag.String("private_key_file", "auth/private.key", "private key file")
+var wechatAppID = flag.String("wechat_app_id", "<APPID>", "wechat app id")
+var wechatAppSecret = flag.String("wechat_app_secret", "<APPSECRET>", "wechat ap secret")
+
 func main() {
+	flag.Parse()
 	logger, err := server.NewZapLogger()
 	if err != nil {
 		log.Fatalf("cannot create logger:%v\n", err)
 	}
 
 	c := context.Background()
-	mongoClient, err := mongo.Connect(c, options.Client().ApplyURI("mongodb://localhost:27017/?readPreference=primary&ssl=false&directConnection=true"))
+	mongoClient, err := mongo.Connect(c, options.Client().ApplyURI(*mongoURI))
 	if err != nil {
 		logger.Fatal("cannot connect mongodb", zap.Error(err))
 	}
 
-	pkFile, err := os.Open("auth/private.key")
+	pkFile, err := os.Open(*privateKeyFile)
 	if err != nil {
 		logger.Fatal("cannot open private key")
 	}
@@ -48,13 +57,15 @@ func main() {
 
 	logger.Sugar().Fatal(server.RunGRPCServer(&server.GRPCConfig{
 		Name:   "auth",
-		Addr:   ":8081",
+		Addr:   *addr,
 		Logger: logger,
 		RegisterFunc: func(s *grpc.Server) {
 			authpb.RegisterAuthServiceServer(s, &auth.Service{
 				OpenIDResolver: &wechat.Service{
-					AppID:     "wx7eef9c73c4911bbf",
-					AppSecret: "6d5e9a9dff1f924cb47de3efe48267a8",
+					// AppID:     "wx7eef9c73c4911bbf",
+					AppID: *wechatAppID,
+					// AppSecret: "6d5e9a9dff1f924cb47de3efe48267a8",
+					AppSecret: *wechatAppSecret,
 				},
 				Mongo:          dao.NewMongo(mongoClient.Database("coolcar")),
 				Logger:         logger,

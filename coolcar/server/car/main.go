@@ -13,9 +13,10 @@ import (
 	rentalpb "coolcar/rental/api/gen/v1"
 	coolenvpb "coolcar/shared/coolenv"
 	"coolcar/shared/server"
-	"flag"
 	"log"
 	"net/http"
+
+	"github.com/namsral/flag"
 
 	"github.com/gorilla/websocket"
 	"github.com/streadway/amqp"
@@ -26,6 +27,7 @@ import (
 )
 
 var addr = flag.String("addr", ":8084", "address to listen")
+var wsAddr = flag.String("ws_addr", ":9090", "websocket address to listen")
 var mongoURI = flag.String("mongo_uri", "mongodb://localhost:27017", "mongo uri")
 var amqpURL = flag.String("amqp_url", "amqp://guest:guest@localhost:5672/", "amqp url")
 var carAddr = flag.String("car_addr", "localhost:8084", "address for car service")
@@ -58,11 +60,11 @@ func main() {
 		logger.Fatal("cannot create publisher", zap.Error(err))
 	}
 
-	carConn, err := grpc.Dial("localhost:8084", grpc.WithInsecure())
+	carConn, err := grpc.Dial(*carAddr, grpc.WithInsecure())
 	if err != nil {
 		logger.Fatal("cannot connect car service", zap.Error(err))
 	}
-	aiConn, err := grpc.Dial("localhost:18001", grpc.WithInsecure())
+	aiConn, err := grpc.Dial(*aiAddr, grpc.WithInsecure())
 	if err != nil {
 		logger.Fatal("cannot connect ai service", zap.Error(err))
 	}
@@ -96,7 +98,7 @@ func main() {
 	}
 	http.HandleFunc("/ws", ws.Handler(u, sub, logger))
 	go func() {
-		addr := ":9090"
+		addr := *wsAddr
 		logger.Info("HTTTP server started.", zap.String("addr", addr))
 		logger.Sugar().Fatal(http.ListenAndServe(addr, nil))
 	}()
