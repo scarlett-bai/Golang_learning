@@ -1,10 +1,13 @@
 import { IAppOption } from "../../appoption"
+import { ProfileService } from "../../service/profile"
 import { rental } from "../../service/proto_gen/rental/rental_pb"
 import { TripService } from "../../service/trip"
+import { formatDuration, formatFee } from "../../utils/format"
 import { routing } from "../../utils/routing"
 
 interface Trip {
   id: string
+  shortId: string
   start: string
   end: string
   duration: string
@@ -34,11 +37,27 @@ interface MainItemQueryResult {
     navScrollId: string
   }
 }
+
+const tripStatusMap = new Map([
+  [rental.v1.TripStatus.IN_PROGRESS, '进行中'],
+  [rental.v1.TripStatus.FINISHED, '已完成'],
+])
+
+const licStatusMap = new Map([
+  [rental.v1.IdentityStatus.UNSUBMITTED, '未认证'],
+  [rental.v1.IdentityStatus.PENDING, '待审核'],
+  [rental.v1.IdentityStatus.VERIFIED, '已认证']
+])
+
+
 // pages/mytrips/mytrips.ts
 Page({
   scrollStates: {
       mainItems: [] as MainItemQueryResult[]
   },
+
+  layoutResolver: undefined as ((value?: unknown)=>void) | undefined,
+
 
   /**
    * 页面的初始数据
@@ -73,6 +92,7 @@ Page({
         }
 
       ],
+      licStatus: licStatusMap.get(rental.v1.IdentityStatus.UNSUBMITTED),
       avatarURL: '',
       mainItems: [] as MainItem[],
       navItems: [] as NavItem[],
@@ -106,53 +126,84 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad() {
-    const res = await TripService.GetTrips(rental.v1.TripStatus.FINISHED)
-    this.populateTrips()
-    const userInfo = await getApp<IAppOption>().globalData.userInfo
-    this.setData({
-      avatarURL:userInfo.avatarUrl,
+    const layoutReady = new Promise((resolve) => {
+      this.layoutResolver = resolve
     })
+    Promise.all([TripService.getTrips(), layoutReady]).then(([trips]) => {
+      this.populateTrips(trips.trips!)
+    })
+    // const [trips] = await Promise.all([TripService.getTrips(), layoutReady])
+    // this.populateTrips(trips.trips!)
+    getApp<IAppOption>().globalData.userInfo.then(userInfo => {
+      this.setData({
+        avatarURL:userInfo.avatarUrl,
+      })
+    })
+    ProfileService.getProfile().then(p => {
+      this.setData({
+        licStatus: licStatusMap.get(p.identityStatus || 0)
+      })
+    })  
   },
 
 
-populateTrips(){
+populateTrips(trips: rental.v1.ITripEntity[]){
     const mainItems: MainItem[] = []
     const navItems: NavItem[] = []
     let navSel =  ''
     let prevNav =  ''
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < trips.length; i++) {
+      const trip = trips[0]
       const mainId = 'main-' + i
       const navId = 'nav-' + i
-      const tripId = (10000+i).toString()
+      const shortId = trip.id?.substring(trip.id.length-6)
       if (!prevNav) {
         prevNav = navId
+      }
+
+      const tripData: Trip = {
+        id: trip.id!,
+        shortId: '****' + shortId!,
+        start: trip.trip?.start?.poiName! || '未知',
+        end: '',
+        distance:'',
+        duration: '',
+        fee: '',
+        status: tripStatusMap.get(trip.trip?.status!) || '未知',
+      }
+      const end = trip.trip?.end
+      if (end) {
+        tripData.end = end.poiName || '未知'
+        tripData.distance = end.kmDriven?.toFixed(1) + '公里'
+        tripData.fee = formatFee(end.feeCent || 0)
+        const dur = formatDuration(end.timestampSec||0 - (trip.trip?.start?.timestampSec||0))
+        tripData.duration = `${dur.hh}时${dur.mm}分`
       }
       mainItems.push({
         id: mainId,
         navId: navId,
         navScrollId: prevNav,
-        data: {
-          id: tripId,
-          start: '东方明珠',
-          end: '迪士尼',
-          distance:'27.0公里',
-          duration: '0时44分',
-         fee: '128.8元',
-         status: '已完成',
-      },
+        data: tripData,
         
       })
       navItems.push({
         id: navId,
         mainId: mainId,
-        label: tripId,
+        label: shortId || '',
       })
       if (i===0) {
         navSel = navId
       } 
       prevNav = navId
     }
-  
+    console.log('nav count:', this.data.navCount)
+    for (let  i = 0; i < this.data.navCount-1; i++) {
+      navItems.push({
+        id: '',
+        mainId: '',
+        label: '',
+      })
+    }
     this.setData({
       mainItems,
       navItems,
@@ -209,6 +260,10 @@ populateTrips(){
       this.setData({
           tripsHeight: height,
           navCount : Math.round(height/50)
+      }, ()=> {
+        if (this.layoutResolver) {
+          this.layoutResolver()
+        }
       })
       
     }).exec()
@@ -219,7 +274,11 @@ populateTrips(){
    * 生命周期函数--监听页面显示
    */
   onShow() {
-
+    ProfileService.getProfile().then(p => {
+      this.setData({
+        licStatus: licStatusMap.get(p.identityStatus||0)
+      })
+    })
   },
 
   /**

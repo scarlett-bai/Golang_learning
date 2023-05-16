@@ -2,7 +2,8 @@ import camelcaseKeys = require("camelcase-keys")
 import { auth } from "./proto_gen/auth/auth_pb"
 
 export namespace Coolcar {
-    const serverAddr = 'http://localhost:8080'
+    export const serverAddr = 'http://localhost:8080'
+    export const wsAddr = 'ws://localhost:9090'
     const AUTH_ERR = 'AUTH_ERR'
 
     const authData = {
@@ -110,5 +111,29 @@ export namespace Coolcar {
                 fail: reject
             })
         }) 
+    }
+
+    export interface UploadFileOpts {
+        localPath: string
+        url: string
+    }
+    export function uploadfile(o: UploadFileOpts): Promise<void> {
+        const data = wx.getFileSystemManager().readFileSync(o.localPath)
+        return new Promise((reslove, reject) => {
+            wx.request({
+            method: 'PUT',
+            url: o.url,
+            data,
+            success: res => {
+                if (res.statusCode >= 400) {
+                    reject(res)
+                } else {
+                    reslove()
+                }
+            },
+            fail: reject,
+        })
+        })
+         
     }
 }

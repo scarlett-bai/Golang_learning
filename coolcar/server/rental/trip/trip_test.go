@@ -12,6 +12,7 @@ import (
 	"coolcar/shared/server"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"testing"
 )
@@ -36,7 +37,7 @@ func TestCreateTrip(t *testing.T) {
 		},
 	}
 	pm.iID = "identity1"
-	golden := `{"account_id":"account1","car_id":"car1","start":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门","timestamp_sec":1680233350},"current":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门"},"status":1,"identity_id":"identity1"}`
+	golden := `{"account_id":%q,"car_id":"car1","start":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门","timestamp_sec":1680233350},"current":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门","timestamp_sec":1680233350},"status":1,"identity_id":"identity1"}`
 	cases := []struct {
 		name         string
 		accountID    string
@@ -51,7 +52,7 @@ func TestCreateTrip(t *testing.T) {
 			name:      "normal_create",
 			accountID: "account1",
 			tripID:    "5f8132eb12714bf629489054",
-			want:      golden,
+			want:      fmt.Sprintf(golden, "account1"),
 		},
 		{
 			name:       "profile_err",
@@ -72,7 +73,7 @@ func TestCreateTrip(t *testing.T) {
 			accountID:    "account4",
 			tripID:       "5f8132eb12714bf629489057",
 			carUnlockErr: fmt.Errorf("unlock"),
-			want:         golden,
+			want:         fmt.Sprintf(golden, "account4"),
 		},
 	}
 
@@ -112,7 +113,105 @@ func TestCreateTrip(t *testing.T) {
 }
 
 func TestTripLifecycle(t *testing.T) {
+	c := auth.ContextWithAccoundID(context.Background(), id.AccountID("account_for_lifecycle"))
+	s := newService(c, t, &profileManager{}, &carManager{})
+	tid := id.TripID("5f8132eb22714bf629489056")
+	mgutil.NewObjectIDWithValue(tid)
+	cases := []struct {
+		name    string
+		now     int64
+		op      func() (*rentalpb.Trip, error)
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "create_trip",
+			now:  10000,
+			op: func() (*rentalpb.Trip, error) {
+				e, err := s.CreateTrip(c, &rentalpb.CreateTripRequest{
+					CarId: "car1",
+					Start: &rentalpb.Location{
+						Latitude:  32.123,
+						Longitude: 114.2525,
+					},
+				})
+				if err != nil {
+					return nil, err
+				}
+				return e.Trip, nil
+			},
+			want: `{"account_id":"account_for_lifecycle","car_id":"car1","start":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门","timestamp_sec":10000},"current":{"location":{"latitude":32.123,"longitude":114.2525},"poi_name":"天安门","timestamp_sec":10000},"status":1}`,
+		},
+		{
+			name: "update_trip",
+			now:  20000,
+			op: func() (*rentalpb.Trip, error) {
+				return s.UpdateTrip(c, &rentalpb.UpdateTripRequest{
+					Id: tid.String(),
+					Current: &rentalpb.Location{
+						Longitude: 28.23,
+						Latitude:  123.24,
+					},
+				})
+			},
+		},
+		{
+			name: "finish_trip",
+			now:  30000,
+			op: func() (*rentalpb.Trip, error) {
+				return s.UpdateTrip(c, &rentalpb.UpdateTripRequest{
+					Id:      tid.String(),
+					EndTrip: true,
+				})
+			},
+		},
+		{
+			name: "query_trip",
+			now:  40000,
+			op: func() (*rentalpb.Trip, error) {
+				return s.GetTrip(c, &rentalpb.GetTripRequest{
+					Id: tid.String(),
+				})
+			},
+		},
+		{
+			name: "update_after_finished",
+			now:  50000,
+			op: func() (*rentalpb.Trip, error) {
+				return s.UpdateTrip(c, &rentalpb.UpdateTripRequest{
+					Id: tid.String(),
+				})
+			},
+			wantErr: true,
+		},
+	}
 
+	rand.Seed(1345)
+	for _, cc := range cases {
+		nowFunc = func() int64 {
+			return cc.now
+		}
+		trip, err := cc.op()
+		if cc.wantErr {
+			if err == nil {
+				t.Errorf("%s: want error; got none", cc.name)
+			} else {
+				continue
+			}
+		}
+		if err != nil {
+			t.Errorf("%s: operation failed: %v", cc.name, err)
+			continue
+		}
+		b, err := json.Marshal(trip)
+		if err != nil {
+			t.Errorf("%s: failed marshalling response: %v", cc.name, err)
+		}
+		got := string(b)
+		if cc.want != got {
+			t.Errorf("%s: incoorect response;want: %s, got %s", cc.name, cc.want, got)
+		}
+	}
 }
 
 func newService(c context.Context, t *testing.T, pm ProfileManager, cm CarManager) *Service {
@@ -151,15 +250,19 @@ func (p *profileManager) Verify(context.Context, id.AccountID) (id.IdentityID, e
 type carManager struct {
 	verifyErr error
 	unlockErr error
+	lockErr   error
 }
 
 // CarManager defines the ACL for car management
-
-func (c *carManager) Verify(context.Context, id.CarID, *rentalpb.Location) error {
-	return c.verifyErr
+func (m *carManager) Verify(c context.Context, cid id.CarID, loc *rentalpb.Location) error {
+	return m.verifyErr
 }
-func (c *carManager) Unlock(context.Context, id.CarID) error {
-	return c.unlockErr
+func (m *carManager) Unlock(c context.Context, cid id.CarID, aid id.AccountID, tid id.TripID, avatarURL string) error {
+	return m.unlockErr
+}
+
+func (m *carManager) Lock(c context.Context, cid id.CarID) error {
+	return m.lockErr
 }
 
 type distCalc struct {

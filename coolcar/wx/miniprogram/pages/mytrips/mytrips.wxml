@@ -11,7 +11,7 @@
                 <text class="cuIcon-people"></text>
             </button>
         </view>
-        <view class="text-blue" bindtap="onRegisterTap">驾驶资格未认证</view>
+        <view class="text-blue" bindtap="onRegisterTap">驾驶资格{{licStatus}}</view>
     </view>
 </view>
 <view class="nav-container">
@@ -25,8 +25,11 @@
         <view wx:for="{{mainItems}}" wx:key="id" class="trip bg-white margin-bottom margin-lr padding-bottom main-item" id="{{item.id}}" data-nav-id="{{item.navId}}" data-nav-scroll-id="{{item.navScrollId}}">
             <view class="cu-bar solid-bottom padding-right">
                 <view class="action">
-                    <text class="cuIcon-title text-green">{{item.data.id}}</text>
-                    <view>{{item.data.status}}</view>
+                    <text class="cuIcon-title text-green">{{item.data.shortId}}</text>
+                    <view class="{{item.data.inProgress?'text-blue in-progress text-lg text-bold':''}}">
+                        {{item.data.status}}
+                        <text wx:if="{{item.data.inProgress}}" class="cuIcon-right"></text>
+                    </view>
                 </view>
             </view>
             <view class="trip-detail padding-right">

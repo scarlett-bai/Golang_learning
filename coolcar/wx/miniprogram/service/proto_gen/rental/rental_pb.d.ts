@@ -31,16 +31,6 @@ export namespace rental {
             public longitude: number;
 
             /**
-             * Decodes a Location message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns Location
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.Location;
-
-            /**
              * Creates a Location message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
              * @returns Location
@@ -106,16 +96,6 @@ export namespace rental {
             public timestampSec: number;
 
             /**
-             * Decodes a LocationStatus message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns LocationStatus
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.LocationStatus;
-
-            /**
              * Creates a LocationStatus message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
              * @returns LocationStatus
@@ -168,16 +148,6 @@ export namespace rental {
 
             /** TripEntity trip. */
             public trip?: (rental.v1.ITrip|null);
-
-            /**
-             * Decodes a TripEntity message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns TripEntity
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.TripEntity;
 
             /**
              * Creates a TripEntity message from a plain object. Also converts values to their respective internal types.
@@ -257,16 +227,6 @@ export namespace rental {
             public identityId: string;
 
             /**
-             * Decodes a Trip message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns Trip
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.Trip;
-
-            /**
              * Creates a Trip message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
              * @returns Trip
@@ -296,6 +256,9 @@ export namespace rental {
 
             /** CreateTripRequest carId */
             carId?: (string|null);
+
+            /** CreateTripRequest avatarUrl */
+            avatarUrl?: (string|null);
         }
 
         /** Represents a CreateTripRequest. */
@@ -313,15 +276,8 @@ export namespace rental {
             /** CreateTripRequest carId. */
             public carId: string;
 
-            /**
-             * Decodes a CreateTripRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns CreateTripRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.CreateTripRequest;
+            /** CreateTripRequest avatarUrl. */
+            public avatarUrl: string;
 
             /**
              * Creates a CreateTripRequest message from a plain object. Also converts values to their respective internal types.
@@ -345,57 +301,6 @@ export namespace rental {
             public toJSON(): { [k: string]: any };
         }
 
-        /** Properties of a CreateTripResponse. */
-        interface ICreateTripResponse {
-
-            /** CreateTripResponse trip */
-            trip?: (rental.v1.ITripEntity|null);
-        }
-
-        /** Represents a CreateTripResponse. */
-        class CreateTripResponse implements ICreateTripResponse {
-
-            /**
-             * Constructs a new CreateTripResponse.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: rental.v1.ICreateTripResponse);
-
-            /** CreateTripResponse trip. */
-            public trip?: (rental.v1.ITripEntity|null);
-
-            /**
-             * Decodes a CreateTripResponse message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns CreateTripResponse
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.CreateTripResponse;
-
-            /**
-             * Creates a CreateTripResponse message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns CreateTripResponse
-             */
-            public static fromObject(object: { [k: string]: any }): rental.v1.CreateTripResponse;
-
-            /**
-             * Creates a plain object from a CreateTripResponse message. Also converts values to other types if specified.
-             * @param message CreateTripResponse
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: rental.v1.CreateTripResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this CreateTripResponse to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-        }
-
         /** Properties of a GetTripRequest. */
         interface IGetTripRequest {
 
@@ -414,16 +319,6 @@ export namespace rental {
 
             /** GetTripRequest id. */
             public id: string;
-
-            /**
-             * Decodes a GetTripRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns GetTripRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.GetTripRequest;
 
             /**
              * Creates a GetTripRequest message from a plain object. Also converts values to their respective internal types.
@@ -467,16 +362,6 @@ export namespace rental {
             public status: rental.v1.TripStatus;
 
             /**
-             * Decodes a GetTripsRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns GetTripsRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.GetTripsRequest;
-
-            /**
              * Creates a GetTripsRequest message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
              * @returns GetTripsRequest
@@ -498,52 +383,42 @@ export namespace rental {
             public toJSON(): { [k: string]: any };
         }
 
-        /** Properties of a GetTripResponse. */
-        interface IGetTripResponse {
+        /** Properties of a GetTripsResponse. */
+        interface IGetTripsResponse {
 
-            /** GetTripResponse trips */
+            /** GetTripsResponse trips */
             trips?: (rental.v1.ITripEntity[]|null);
         }
 
-        /** Represents a GetTripResponse. */
-        class GetTripResponse implements IGetTripResponse {
+        /** Represents a GetTripsResponse. */
+        class GetTripsResponse implements IGetTripsResponse {
 
             /**
-             * Constructs a new GetTripResponse.
+             * Constructs a new GetTripsResponse.
              * @param [properties] Properties to set
              */
-            constructor(properties?: rental.v1.IGetTripResponse);
+            constructor(properties?: rental.v1.IGetTripsResponse);
 
-            /** GetTripResponse trips. */
+            /** GetTripsResponse trips. */
             public trips: rental.v1.ITripEntity[];
 
             /**
-             * Decodes a GetTripResponse message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns GetTripResponse
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.GetTripResponse;
-
-            /**
-             * Creates a GetTripResponse message from a plain object. Also converts values to their respective internal types.
+             * Creates a GetTripsResponse message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
-             * @returns GetTripResponse
+             * @returns GetTripsResponse
              */
-            public static fromObject(object: { [k: string]: any }): rental.v1.GetTripResponse;
+            public static fromObject(object: { [k: string]: any }): rental.v1.GetTripsResponse;
 
             /**
-             * Creates a plain object from a GetTripResponse message. Also converts values to other types if specified.
-             * @param message GetTripResponse
+             * Creates a plain object from a GetTripsResponse message. Also converts values to other types if specified.
+             * @param message GetTripsResponse
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: rental.v1.GetTripResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: rental.v1.GetTripsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
-             * Converts this GetTripResponse to JSON.
+             * Converts this GetTripsResponse to JSON.
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
@@ -579,16 +454,6 @@ export namespace rental {
 
             /** UpdateTripRequest endTrip. */
             public endTrip: boolean;
-
-            /**
-             * Decodes an UpdateTripRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns UpdateTripRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): rental.v1.UpdateTripRequest;
 
             /**
              * Creates an UpdateTripRequest message from a plain object. Also converts values to their respective internal types.
@@ -654,7 +519,7 @@ export namespace rental {
             /**
              * Calls GetTrips.
              * @param request GetTripsRequest message or plain object
-             * @param callback Node-style callback called with the error, if any, and GetTripResponse
+             * @param callback Node-style callback called with the error, if any, and GetTripsResponse
              */
             public getTrips(request: rental.v1.IGetTripsRequest, callback: rental.v1.TripService.GetTripsCallback): void;
 
@@ -663,7 +528,7 @@ export namespace rental {
              * @param request GetTripsRequest message or plain object
              * @returns Promise
              */
-            public getTrips(request: rental.v1.IGetTripsRequest): Promise<rental.v1.GetTripResponse>;
+            public getTrips(request: rental.v1.IGetTripsRequest): Promise<rental.v1.GetTripsResponse>;
 
             /**
              * Calls UpdateTrip.
@@ -699,9 +564,9 @@ export namespace rental {
             /**
              * Callback as used by {@link rental.v1.TripService#getTrips}.
              * @param error Error, if any
-             * @param [response] GetTripResponse
+             * @param [response] GetTripsResponse
              */
-            type GetTripsCallback = (error: (Error|null), response?: rental.v1.GetTripResponse) => void;
+            type GetTripsCallback = (error: (Error|null), response?: rental.v1.GetTripsResponse) => void;
 
             /**
              * Callback as used by {@link rental.v1.TripService#updateTrip}.
@@ -709,6 +574,615 @@ export namespace rental {
              * @param [response] Trip
              */
             type UpdateTripCallback = (error: (Error|null), response?: rental.v1.Trip) => void;
+        }
+
+        /** Gender enum. */
+        enum Gender {
+            G_NOT_SPECIFIED = 0,
+            MALE = 1,
+            FEMALE = 2
+        }
+
+        /** IdentityStatus enum. */
+        enum IdentityStatus {
+            UNSUBMITTED = 0,
+            PENDING = 1,
+            VERIFIED = 2
+        }
+
+        /** Properties of a Profile. */
+        interface IProfile {
+
+            /** Profile identity */
+            identity?: (rental.v1.IIdentity|null);
+
+            /** Profile identityStatus */
+            identityStatus?: (rental.v1.IdentityStatus|null);
+        }
+
+        /** Represents a Profile. */
+        class Profile implements IProfile {
+
+            /**
+             * Constructs a new Profile.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IProfile);
+
+            /** Profile identity. */
+            public identity?: (rental.v1.IIdentity|null);
+
+            /** Profile identityStatus. */
+            public identityStatus: rental.v1.IdentityStatus;
+
+            /**
+             * Creates a Profile message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Profile
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.Profile;
+
+            /**
+             * Creates a plain object from a Profile message. Also converts values to other types if specified.
+             * @param message Profile
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.Profile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Profile to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of an Identity. */
+        interface IIdentity {
+
+            /** Identity licNumber */
+            licNumber?: (string|null);
+
+            /** Identity name */
+            name?: (string|null);
+
+            /** Identity gender */
+            gender?: (rental.v1.Gender|null);
+
+            /** Identity birthDateMillis */
+            birthDateMillis?: (number|null);
+        }
+
+        /** Represents an Identity. */
+        class Identity implements IIdentity {
+
+            /**
+             * Constructs a new Identity.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IIdentity);
+
+            /** Identity licNumber. */
+            public licNumber: string;
+
+            /** Identity name. */
+            public name: string;
+
+            /** Identity gender. */
+            public gender: rental.v1.Gender;
+
+            /** Identity birthDateMillis. */
+            public birthDateMillis: number;
+
+            /**
+             * Creates an Identity message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Identity
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.Identity;
+
+            /**
+             * Creates a plain object from an Identity message. Also converts values to other types if specified.
+             * @param message Identity
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.Identity, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Identity to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GetProfileRequest. */
+        interface IGetProfileRequest {
+        }
+
+        /** Represents a GetProfileRequest. */
+        class GetProfileRequest implements IGetProfileRequest {
+
+            /**
+             * Constructs a new GetProfileRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IGetProfileRequest);
+
+            /**
+             * Creates a GetProfileRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetProfileRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.GetProfileRequest;
+
+            /**
+             * Creates a plain object from a GetProfileRequest message. Also converts values to other types if specified.
+             * @param message GetProfileRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.GetProfileRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetProfileRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClearProfileRequest. */
+        interface IClearProfileRequest {
+        }
+
+        /** Represents a ClearProfileRequest. */
+        class ClearProfileRequest implements IClearProfileRequest {
+
+            /**
+             * Constructs a new ClearProfileRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IClearProfileRequest);
+
+            /**
+             * Creates a ClearProfileRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClearProfileRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.ClearProfileRequest;
+
+            /**
+             * Creates a plain object from a ClearProfileRequest message. Also converts values to other types if specified.
+             * @param message ClearProfileRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.ClearProfileRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClearProfileRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GetProfilePhotoRequest. */
+        interface IGetProfilePhotoRequest {
+        }
+
+        /** Represents a GetProfilePhotoRequest. */
+        class GetProfilePhotoRequest implements IGetProfilePhotoRequest {
+
+            /**
+             * Constructs a new GetProfilePhotoRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IGetProfilePhotoRequest);
+
+            /**
+             * Creates a GetProfilePhotoRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetProfilePhotoRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.GetProfilePhotoRequest;
+
+            /**
+             * Creates a plain object from a GetProfilePhotoRequest message. Also converts values to other types if specified.
+             * @param message GetProfilePhotoRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.GetProfilePhotoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetProfilePhotoRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a GetProfilePhotoResponse. */
+        interface IGetProfilePhotoResponse {
+
+            /** GetProfilePhotoResponse url */
+            url?: (string|null);
+        }
+
+        /** Represents a GetProfilePhotoResponse. */
+        class GetProfilePhotoResponse implements IGetProfilePhotoResponse {
+
+            /**
+             * Constructs a new GetProfilePhotoResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IGetProfilePhotoResponse);
+
+            /** GetProfilePhotoResponse url. */
+            public url: string;
+
+            /**
+             * Creates a GetProfilePhotoResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GetProfilePhotoResponse
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.GetProfilePhotoResponse;
+
+            /**
+             * Creates a plain object from a GetProfilePhotoResponse message. Also converts values to other types if specified.
+             * @param message GetProfilePhotoResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.GetProfilePhotoResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GetProfilePhotoResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a CreateProfilePhotoRequest. */
+        interface ICreateProfilePhotoRequest {
+        }
+
+        /** Represents a CreateProfilePhotoRequest. */
+        class CreateProfilePhotoRequest implements ICreateProfilePhotoRequest {
+
+            /**
+             * Constructs a new CreateProfilePhotoRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.ICreateProfilePhotoRequest);
+
+            /**
+             * Creates a CreateProfilePhotoRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns CreateProfilePhotoRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.CreateProfilePhotoRequest;
+
+            /**
+             * Creates a plain object from a CreateProfilePhotoRequest message. Also converts values to other types if specified.
+             * @param message CreateProfilePhotoRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.CreateProfilePhotoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this CreateProfilePhotoRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a CreateProfilePhotoResponse. */
+        interface ICreateProfilePhotoResponse {
+
+            /** CreateProfilePhotoResponse uploadUrl */
+            uploadUrl?: (string|null);
+        }
+
+        /** Represents a CreateProfilePhotoResponse. */
+        class CreateProfilePhotoResponse implements ICreateProfilePhotoResponse {
+
+            /**
+             * Constructs a new CreateProfilePhotoResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.ICreateProfilePhotoResponse);
+
+            /** CreateProfilePhotoResponse uploadUrl. */
+            public uploadUrl: string;
+
+            /**
+             * Creates a CreateProfilePhotoResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns CreateProfilePhotoResponse
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.CreateProfilePhotoResponse;
+
+            /**
+             * Creates a plain object from a CreateProfilePhotoResponse message. Also converts values to other types if specified.
+             * @param message CreateProfilePhotoResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.CreateProfilePhotoResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this CreateProfilePhotoResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a CompleteProfilePhotoRequest. */
+        interface ICompleteProfilePhotoRequest {
+        }
+
+        /** Represents a CompleteProfilePhotoRequest. */
+        class CompleteProfilePhotoRequest implements ICompleteProfilePhotoRequest {
+
+            /**
+             * Constructs a new CompleteProfilePhotoRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.ICompleteProfilePhotoRequest);
+
+            /**
+             * Creates a CompleteProfilePhotoRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns CompleteProfilePhotoRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.CompleteProfilePhotoRequest;
+
+            /**
+             * Creates a plain object from a CompleteProfilePhotoRequest message. Also converts values to other types if specified.
+             * @param message CompleteProfilePhotoRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.CompleteProfilePhotoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this CompleteProfilePhotoRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClearProfilePhotoRequest. */
+        interface IClearProfilePhotoRequest {
+        }
+
+        /** Represents a ClearProfilePhotoRequest. */
+        class ClearProfilePhotoRequest implements IClearProfilePhotoRequest {
+
+            /**
+             * Constructs a new ClearProfilePhotoRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IClearProfilePhotoRequest);
+
+            /**
+             * Creates a ClearProfilePhotoRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClearProfilePhotoRequest
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.ClearProfilePhotoRequest;
+
+            /**
+             * Creates a plain object from a ClearProfilePhotoRequest message. Also converts values to other types if specified.
+             * @param message ClearProfilePhotoRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.ClearProfilePhotoRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClearProfilePhotoRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Properties of a ClearProfilePhotoResponse. */
+        interface IClearProfilePhotoResponse {
+        }
+
+        /** Represents a ClearProfilePhotoResponse. */
+        class ClearProfilePhotoResponse implements IClearProfilePhotoResponse {
+
+            /**
+             * Constructs a new ClearProfilePhotoResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: rental.v1.IClearProfilePhotoResponse);
+
+            /**
+             * Creates a ClearProfilePhotoResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ClearProfilePhotoResponse
+             */
+            public static fromObject(object: { [k: string]: any }): rental.v1.ClearProfilePhotoResponse;
+
+            /**
+             * Creates a plain object from a ClearProfilePhotoResponse message. Also converts values to other types if specified.
+             * @param message ClearProfilePhotoResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: rental.v1.ClearProfilePhotoResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ClearProfilePhotoResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+        }
+
+        /** Represents a ProfileService */
+        class ProfileService extends $protobuf.rpc.Service {
+
+            /**
+             * Constructs a new ProfileService service.
+             * @param rpcImpl RPC implementation
+             * @param [requestDelimited=false] Whether requests are length-delimited
+             * @param [responseDelimited=false] Whether responses are length-delimited
+             */
+            constructor(rpcImpl: $protobuf.RPCImpl, requestDelimited?: boolean, responseDelimited?: boolean);
+
+            /**
+             * Calls GetProfile.
+             * @param request GetProfileRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and Profile
+             */
+            public getProfile(request: rental.v1.IGetProfileRequest, callback: rental.v1.ProfileService.GetProfileCallback): void;
+
+            /**
+             * Calls GetProfile.
+             * @param request GetProfileRequest message or plain object
+             * @returns Promise
+             */
+            public getProfile(request: rental.v1.IGetProfileRequest): Promise<rental.v1.Profile>;
+
+            /**
+             * Calls SubmitProfile.
+             * @param request Identity message or plain object
+             * @param callback Node-style callback called with the error, if any, and Profile
+             */
+            public submitProfile(request: rental.v1.IIdentity, callback: rental.v1.ProfileService.SubmitProfileCallback): void;
+
+            /**
+             * Calls SubmitProfile.
+             * @param request Identity message or plain object
+             * @returns Promise
+             */
+            public submitProfile(request: rental.v1.IIdentity): Promise<rental.v1.Profile>;
+
+            /**
+             * Calls ClearProfile.
+             * @param request ClearProfileRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and Profile
+             */
+            public clearProfile(request: rental.v1.IClearProfileRequest, callback: rental.v1.ProfileService.ClearProfileCallback): void;
+
+            /**
+             * Calls ClearProfile.
+             * @param request ClearProfileRequest message or plain object
+             * @returns Promise
+             */
+            public clearProfile(request: rental.v1.IClearProfileRequest): Promise<rental.v1.Profile>;
+
+            /**
+             * Calls GetProfilePhoto.
+             * @param request GetProfilePhotoRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and GetProfilePhotoResponse
+             */
+            public getProfilePhoto(request: rental.v1.IGetProfilePhotoRequest, callback: rental.v1.ProfileService.GetProfilePhotoCallback): void;
+
+            /**
+             * Calls GetProfilePhoto.
+             * @param request GetProfilePhotoRequest message or plain object
+             * @returns Promise
+             */
+            public getProfilePhoto(request: rental.v1.IGetProfilePhotoRequest): Promise<rental.v1.GetProfilePhotoResponse>;
+
+            /**
+             * Calls CreateProfilePhoto.
+             * @param request CreateProfilePhotoRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and CreateProfilePhotoResponse
+             */
+            public createProfilePhoto(request: rental.v1.ICreateProfilePhotoRequest, callback: rental.v1.ProfileService.CreateProfilePhotoCallback): void;
+
+            /**
+             * Calls CreateProfilePhoto.
+             * @param request CreateProfilePhotoRequest message or plain object
+             * @returns Promise
+             */
+            public createProfilePhoto(request: rental.v1.ICreateProfilePhotoRequest): Promise<rental.v1.CreateProfilePhotoResponse>;
+
+            /**
+             * Calls CompleteProfilePhoto.
+             * @param request CompleteProfilePhotoRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and Identity
+             */
+            public completeProfilePhoto(request: rental.v1.ICompleteProfilePhotoRequest, callback: rental.v1.ProfileService.CompleteProfilePhotoCallback): void;
+
+            /**
+             * Calls CompleteProfilePhoto.
+             * @param request CompleteProfilePhotoRequest message or plain object
+             * @returns Promise
+             */
+            public completeProfilePhoto(request: rental.v1.ICompleteProfilePhotoRequest): Promise<rental.v1.Identity>;
+
+            /**
+             * Calls ClearProfilePhoto.
+             * @param request ClearProfilePhotoRequest message or plain object
+             * @param callback Node-style callback called with the error, if any, and ClearProfilePhotoResponse
+             */
+            public clearProfilePhoto(request: rental.v1.IClearProfilePhotoRequest, callback: rental.v1.ProfileService.ClearProfilePhotoCallback): void;
+
+            /**
+             * Calls ClearProfilePhoto.
+             * @param request ClearProfilePhotoRequest message or plain object
+             * @returns Promise
+             */
+            public clearProfilePhoto(request: rental.v1.IClearProfilePhotoRequest): Promise<rental.v1.ClearProfilePhotoResponse>;
+        }
+
+        namespace ProfileService {
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#getProfile}.
+             * @param error Error, if any
+             * @param [response] Profile
+             */
+            type GetProfileCallback = (error: (Error|null), response?: rental.v1.Profile) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#submitProfile}.
+             * @param error Error, if any
+             * @param [response] Profile
+             */
+            type SubmitProfileCallback = (error: (Error|null), response?: rental.v1.Profile) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#clearProfile}.
+             * @param error Error, if any
+             * @param [response] Profile
+             */
+            type ClearProfileCallback = (error: (Error|null), response?: rental.v1.Profile) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#getProfilePhoto}.
+             * @param error Error, if any
+             * @param [response] GetProfilePhotoResponse
+             */
+            type GetProfilePhotoCallback = (error: (Error|null), response?: rental.v1.GetProfilePhotoResponse) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#createProfilePhoto}.
+             * @param error Error, if any
+             * @param [response] CreateProfilePhotoResponse
+             */
+            type CreateProfilePhotoCallback = (error: (Error|null), response?: rental.v1.CreateProfilePhotoResponse) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#completeProfilePhoto}.
+             * @param error Error, if any
+             * @param [response] Identity
+             */
+            type CompleteProfilePhotoCallback = (error: (Error|null), response?: rental.v1.Identity) => void;
+
+            /**
+             * Callback as used by {@link rental.v1.ProfileService#clearProfilePhoto}.
+             * @param error Error, if any
+             * @param [response] ClearProfilePhotoResponse
+             */
+            type ClearProfilePhotoCallback = (error: (Error|null), response?: rental.v1.ClearProfilePhotoResponse) => void;
         }
     }
 }

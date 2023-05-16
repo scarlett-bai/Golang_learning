@@ -9,6 +9,7 @@ import (
 	"coolcar/rental/trip/dao"
 	"coolcar/shared/auth"
 	"coolcar/shared/id"
+	"coolcar/shared/mongo/objid"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -32,8 +33,9 @@ type ProfileManager interface {
 
 // CarManager defines the ACL for car management
 type CarManager interface {
-	Verify(context.Context, id.CarID, *rentalpb.Location) error
-	Unlock(context.Context, id.CarID) error
+	Verify(c context.Context, cid id.CarID, loc *rentalpb.Location) error
+	Unlock(c context.Context, cid id.CarID, aid id.AccountID, tid id.TripID, avatarURL string) error
+	Lock(c context.Context, cid id.CarID) error
 }
 
 // POIManager resolves POI(Point of Interest).
@@ -86,17 +88,19 @@ func (s *Service) CreateTrip(c context.Context, req *rentalpb.CreateTripRequest)
 		Start:      ls,
 		Current:    ls,
 	})
+	s.Logger.Info("here finish create trip in mongo")
 	if err != nil {
 		s.Logger.Warn("cannot create trip", zap.Error(err))
 		return nil, status.Error(codes.AlreadyExists, "")
 	}
 	// 车辆开锁: 在后台开锁
 	go func() {
-		err := s.CarManager.Unlock(context.Background(), carID)
+		err := s.CarManager.Unlock(context.Background(), carID, aid, objid.ToTripID(tr.ID), req.AvatarUrl)
 		if err != nil {
 			s.Logger.Error("cannot unlock car", zap.Error(err))
 		}
 	}()
+	s.Logger.Info("success to response trip")
 	return &rentalpb.TripEntity{
 		Id:   tr.ID.Hex(),
 		Trip: tr.Trip,
@@ -150,6 +154,10 @@ func (s *Service) UpdateTrip(c context.Context, req *rentalpb.UpdateTripRequest)
 		return nil, status.Error(codes.NotFound, "")
 	}
 
+	if tr.Trip.Status == rentalpb.TripStatus_FINISHED {
+		return nil, status.Error(codes.FailedPrecondition, "cannot update a finished trip")
+	}
+
 	if tr.Trip.Current == nil {
 		s.Logger.Error("trip without current set", zap.String("id:", tid.String()))
 		return nil, status.Error(codes.Internal, "")
@@ -163,10 +171,14 @@ func (s *Service) UpdateTrip(c context.Context, req *rentalpb.UpdateTripRequest)
 	if req.EndTrip {
 		tr.Trip.End = tr.Trip.Current
 		tr.Trip.Status = rentalpb.TripStatus_FINISHED
+		err = s.CarManager.Lock(c, id.CarID(tr.Trip.CarId))
+		if err != nil {
+			return nil, status.Errorf(codes.FailedPrecondition, "cannot unlock car:%v", err)
+		}
 	}
 	s.Mongo.UpdateTrip(c, tid, aid, tr.UpdateAt, tr.Trip)
 	//  commit
-	return nil, status.Error(codes.Unimplemented, "")
+	return tr.Trip, nil
 }
 
 const centsPerSec = 0.7

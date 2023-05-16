@@ -10,6 +10,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -84,7 +85,9 @@ func (m *Mongo) GetTrips(c context.Context, accountID id.AccountID, status renta
 	if status != rentalpb.TripStatus_TS_NOT_SPECIFIED {
 		filter[statusField] = status
 	}
-	res, err := m.col.Find(c, filter)
+	res, err := m.col.Find(c, filter, options.Find().SetSort(bson.M{
+		mgutil.IDFieldName: -1,
+	}))
 	if err != nil {
 		return nil, err
 	}

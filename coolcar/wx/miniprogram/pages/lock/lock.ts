@@ -1,4 +1,7 @@
 import { IAppOption } from "../../appoption"
+import { CarService } from "../../service/car"
+import { car } from "../../service/proto_gen/car/car_pb"
+import { rental } from "../../service/proto_gen/rental/rental_pb"
 import { TripService } from "../../service/trip"
 import { routing } from "../../utils/routing"
 
@@ -7,6 +10,7 @@ const shareLocationKey = "share_location"
 Page({
 
   carID: '',
+  carRefresher: 0,
   data: {
     shareLocation: false,
     avatarURL: '',
@@ -27,8 +31,8 @@ Page({
   },
 
   onShareLocation(e: any){
-    const shareLocation:boolean = e.detail.value
-    wx.setStorageSync(shareLocationKey, shareLocation)
+    this.data.shareLocation = e.detail.value
+    wx.setStorageSync(shareLocationKey, this.data.shareLocation)
   },
   onGetUserInfo(e: any) {
     const userInfo: WechatMiniprogram.UserInfo = e.detail.userInfo
@@ -45,44 +49,55 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: async loc => {
-        console.log('starting a trip', {
-          location: {
-            latitude: loc.latitude,
-            longitude: loc.longitude,
-          },
-          avatarURL: this.data.shareLocation 
-          ? this.data.avatarURL : '',
-        })
         if (!this.carID) {
           console.error('no carID specified')
           return
         }
-        const trip = await TripService.CreateTrip({
-          start: loc,
-          carId: this.carID,
-        })
-
-        if (!trip.id) {
-          console.error('no tripID in response', trip)
+        let trip: rental.v1.ITripEntity
+        try {
+            trip = await TripService.ceateTrip({
+            start: loc,
+            carId: this.carID,
+            avatarUrl: this.data.shareLocation
+              ? this.data.avatarURL: ''
+          })
+        
+          if (!trip.id) {
+            console.error('no tripID in response', trip)
+            return
+          }
+        } catch (err) {
+          wx.showToast({
+            title: '创建行程失败',
+            icon: 'none',
+          })
           return
         }
+        
         // return
         // const tripID = 'trip456'
          wx.showLoading({
             title: '开锁中',
             mask: true,
           })
-          setTimeout(() => {
-            wx.redirectTo({
-              // url: `/pages/driving/driving?trip_id=${{tripID}}`,
-              url: routing.driving({
-                trip_id: trip.id!,
-              }),
-              complete: () => {
-                wx.hideLoading
-              }
-            })
+
+          // 
+          this.carRefresher = setInterval(async () => {
+            const c = await CarService.getCar(this.carID)
+            if (c.status === car.v1.CarStatus.UNLOCKED) {
+                this.clearCarRefresher() 
+                wx.redirectTo({
+                // url: `/pages/driving/driving?trip_id=${{tripID}}`,
+                url: routing.driving({
+                  trip_id: trip.id!,
+                }),
+                complete: () => {
+                  wx.hideLoading()
+                }
+              })
+            }
           }, 2000);
+         
       },
       fail: () => {
         wx.showToast({
@@ -92,6 +107,13 @@ Page({
       }
     })
    
+  },
+
+  clearCarRefresher() {
+    if (this.carRefresher) {
+      clearInterval(this.carRefresher)
+      this.carRefresher = 0
+    }
   },
   /**
    * 页面的初始数据
@@ -138,7 +160,8 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-
+    this.clearCarRefresher()
+    wx.hideLoading()
   },
 
   /**

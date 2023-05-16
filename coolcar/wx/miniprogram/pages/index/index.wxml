@@ -21,3 +21,4 @@
     </cover-view>
 </map>
 <model id="licModel" title="身份认证" contents="需要身份认证才能租车"></model>
+<model id="tripModel" title="行程中" contents="当前有正在进行中的进程，将跳转到行程页面"></model>

@@ -2,16 +2,21 @@ package main
 
 import (
 	"context"
+	blobpb "coolcar/blob/api/gen/v1"
+	carpb "coolcar/car/api/gen/v1"
 	"coolcar/rental/ai"
 	rentalpb "coolcar/rental/api/gen/v1"
+	"coolcar/rental/profile"
+	profiledao "coolcar/rental/profile/dao"
 	trip "coolcar/rental/trip"
 	"coolcar/rental/trip/client/car"
 	"coolcar/rental/trip/client/poi"
-	"coolcar/rental/trip/client/profile"
-	"coolcar/rental/trip/dao"
+	profClient "coolcar/rental/trip/client/profile"
+	tripdao "coolcar/rental/trip/dao"
 	coolenvpb "coolcar/shared/coolenv"
 	"coolcar/shared/server"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,6 +41,26 @@ func main() {
 		logger.Fatal("cannot connect aiservice")
 	}
 
+	db := mongoClient.Database("coolcar")
+
+	blobConn, err := grpc.Dial("localhost:8083", grpc.WithInsecure())
+	if err != nil {
+		logger.Fatal("cannot connect blob service", zap.Error(err))
+	}
+
+	profService := &profile.Service{
+		BlobClient:        blobpb.NewBlobServiceClient(blobConn),
+		PhotoGetExpire:    5 * time.Second,
+		PhotoUploadExpire: 10 * time.Second,
+		Mongo:             profiledao.NewMongo(db),
+		Logger:            logger,
+	}
+
+	carConn, err := grpc.Dial("localhost:8084", grpc.WithInsecure())
+	if err != nil {
+		logger.Fatal("cannot connect car service", zap.Error(err))
+	}
+
 	logger.Sugar().Error(server.RunGRPCServer(&server.GRPCConfig{
 		Name:              "rental",
 		Addr:              ":8082",
@@ -43,15 +68,20 @@ func main() {
 		Logger:            logger,
 		RegisterFunc: func(s *grpc.Server) {
 			rentalpb.RegisterTripServiceServer(s, &trip.Service{
-				CarManager:     &car.Manager{},
-				ProfileManager: &profile.Manager{},
-				POIManager:     &poi.Manager{},
+				CarManager: &car.Manager{
+					CarService: carpb.NewCarServiceClient(carConn),
+				},
+				ProfileManager: &profClient.Manager{
+					Fetcher: profService,
+				},
+				POIManager: &poi.Manager{},
 				DistanceCalc: &ai.Client{
 					AIClient: coolenvpb.NewAIServiceClient(ac),
 				},
-				Mongo:  dao.NewMongo(mongoClient.Database("coolcar")),
+				Mongo:  tripdao.NewMongo(db),
 				Logger: logger,
 			})
+			rentalpb.RegisterProfileServiceServer(s, profService)
 		},
 	}))
 }

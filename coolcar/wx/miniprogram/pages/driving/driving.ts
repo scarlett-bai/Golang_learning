@@ -1,27 +1,36 @@
+import { rental } from "../../service/proto_gen/rental/rental_pb"
 import { TripService } from "../../service/trip"
+import { formatDuration, formatFee } from "../../utils/format"
 import { routing } from "../../utils/routing"
 
 // pages/driving/driving.ts
-const centPerSec = 0.7
+// const centPerSec = 0.7
+const updateIntervalSec = 5  // 每5s向服务器上报数据
 
-function formatDuration(sec: number) {
-  const padString = (n: number) => 
-    n < 10 ? '0'+n.toFixed(0) : n.toFixed(0)
-  const h = Math.floor(sec/3600)
-  sec -= 3600 * h
-  const m = Math.floor(sec/60)
-  sec -= 60 * m
-  const s = Math.floor(sec)
+// function formatDuration(sec: number) {
+//   const padString = (n: number) => 
+//     n < 10 ? '0'+n.toFixed(0) : n.toFixed(0)
+//   const h = Math.floor(sec/3600)
+//   sec -= 3600 * h
+//   const m = Math.floor(sec/60)
+//   sec -= 60 * m
+//   const s = Math.floor(sec)
 
-  return `${padString(h)}:${padString(m)}:${padString(s)}`
-}
+//   return `${padString(h)}:${padString(m)}:${padString(s)}`
+// }
 
-function formatFee(cents: number) {
-  return (cents / 100).toFixed(2)
+// function formatFee(cents: number) {
+//   return (cents / 100).toFixed(2)
+// }
+
+function durationStr(sec: number){
+  const dur = formatDuration(sec)
+  return `${dur.hh}:${dur.mm}:${dur.ss}`
 }
 
 Page({
   timer: undefined as number|undefined,
+  tripID: '',
   data: {
     location: {
       latitude: 32.92,
@@ -52,16 +61,26 @@ Page({
   onLoad(opt: Record<'trip_id', string>) {
     const o: routing.DrivingOpts = opt
     console.log('current trip', o.trip_id)
-    o.trip_id = '641163c4d98effc263012d70'
-    TripService.GetTrip(o.trip_id).then(console.log)
+    // o.trip_id = '641163c4d98effc263012d70'
+    this.tripID = o.trip_id
+    TripService.getTrip(o.trip_id).then(console.log)
     this.setupLocationUpdator()
-    this.setupTimer()
+    this.setupTimer(o.trip_id)
   },
 
   onEndTripTap(){
-    wx.redirectTo({
-      url: routing.mytrips(),
+    TripService.finishTrip(this.tripID).then(() => {
+        wx.redirectTo({
+        url: routing.mytrips(),
     })
+    }).catch(err => {
+      console.log(err)
+      wx.showToast({
+        title: '结束行程失败',
+        icon: 'none',
+      })
+    })
+   
   },
 
   /**
@@ -116,15 +135,31 @@ Page({
 
   },
 
-  setupTimer(){
-    let elapsedSec = 0
-    let cents = 0
+   async setupTimer(tripID: string){
+    const trip = await TripService.updateTripPos(tripID)
+    if (trip.status !== rental.v1.TripStatus.IN_PROGRESS) {
+        console.error('Trip not in progress')
+        return
+    }
+    let secSinceLastUpdate = 0   // 自上次更新已经过去了多少秒
+    let lastUpdateDurationSec = trip.current!.timestampSec! = trip.start!.timestampSec!
+    this.setData({
+      elapsed: durationStr(lastUpdateDurationSec),
+      fee: formatFee(trip.current!.feeCent!)
+    }) 
     this.timer = setInterval(() => {
-        elapsedSec++
-        cents += centPerSec
+      secSinceLastUpdate++
+      if (updateIntervalSec % 5 === 0) {
+        TripService.getTrip(tripID).then(trip => {
+          lastUpdateDurationSec = trip.current!.timestampSec! = trip.start!.timestampSec!
+          secSinceLastUpdate = 0
+          this.setData({
+            fee: formatFee(trip.current!.feeCent!)
+          })
+        }).catch(console.error)
+      }
         this.setData({
-          elapsed: formatDuration(elapsedSec),
-          fee: formatFee(cents),
+          elapsed: durationStr(lastUpdateDurationSec + secSinceLastUpdate),
         })
     }, 1000)
   },
