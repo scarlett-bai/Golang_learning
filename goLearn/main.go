@@ -1,12 +1,10 @@
 package main
 
-import "fmt"
-
-// import (
-// 	"fmt"
-// 	// "log"
-// 	// "time"
-// )
+import (
+	"fmt"
+	// "log"
+	// "time"
+)
 
 // func main() {
 // 	// fmt.Println("Hello world!")
@@ -25,6 +23,7 @@ import "fmt"
 // 	// s4 s5 no longer view arr 但是视图是谁 由系统分配，分配的一个更大的空间存放切片数据
 // 	fmt.Println("arr =", arr)
 // }
+
 func main() {
-	fmt.Print("Hello Scarlett")
+	fmt.Println("Hello World")
 }
